@@ -3,8 +3,30 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "env": ["GO_TAG"],
-      "outputs": ["turbo", "turbo.exe"]
+      "outputs": [
+        // TODO: This is 7GB, do we want to ever even cache the debug build?
+        "../target/debug/**",
+        // TODO: Do we need the whole directory? go-turbo and turbo are ~45mb, the whole directory is 800mb
+        "../target/release/**"
+      ],
+
+      "inputs": [
+        "**/*.go",
+        "**/*_test.go",
+
+        // Rust crates that should trigger a rebuild
+        // TODO: this is not the full list (e.g. pidlock is missing here)
+        // what else do we need here? And should turbo be crawling / using cargo
+        // to figure this out automatically? Or should we wire up a package.json dependency graph?
+        "../crates/turborepo/**",
+        "../crates/turbopath/**",
+        "../crates/turborepo-*/**",
+
+        // Exclude target directories of everything specified above
+        "!../crates/turborepo/target/**",
+        "!../crates/turbopath/target/**",
+        "!../crates/turborepo-*/target/**"
+      ]
     },
     "e2e": {
       "outputs": [],
