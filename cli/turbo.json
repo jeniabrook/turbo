@@ -6,8 +6,10 @@
       "outputs": [
         "../target/debug/go-turbo",
         "../target/debug/turbo",
+        "../target/debug/turbo.exe",
         "../target/release/go-turbo",
-        "../target/release/turbo"
+        "../target/release/turbo",
+        "../target/release/turbo.exe"
       ],
 
       "inputs": [
