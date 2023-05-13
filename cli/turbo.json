@@ -13,19 +13,7 @@
       "inputs": [
         "**/*.go",
         "**/*_test.go",
-
-        // Rust crates that should trigger a rebuild
-        // TODO: this is not the full list (e.g. pidlock is missing here)
-        // what else do we need here? And should turbo be crawling / using cargo
-        // to figure this out automatically? Or should we wire up a package.json dependency graph?
-        "../crates/turborepo/**",
-        "../crates/turbopath/**",
-        "../crates/turborepo-*/**",
-
-        // Exclude target directories of everything specified above
-        "!../crates/turborepo/target/**",
-        "!../crates/turbopath/target/**",
-        "!../crates/turborepo-*/target/**"
+        "../crates/turborepo-*" // Rust crates
       ]
     },
     "e2e": {
