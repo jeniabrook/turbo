@@ -8976,6 +8976,7 @@ dependencies = [
  "indexmap",
  "modularize_imports",
  "serde",
+ "serde_json",
  "styled_components",
  "styled_jsx",
  "swc_core",
