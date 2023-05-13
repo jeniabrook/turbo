@@ -167,7 +167,7 @@ jobs:
         with:
           PATTERNS: |
             examples/**
-            turborepo-tests/examples/**
+            examples-tests/**
             !**.md
             !**.mdx
 
@@ -322,40 +322,6 @@ jobs:
             runner: ubuntu-latest
           - name: macos
             runner: macos-latest
-        manager: [yarn, npm]
-        example: [with-yarn, with-npm, non-monorepo]
-        include:
-          - os:
-              name: ubuntu
-              runner: ubuntu-latest
-            manager: pnpm
-            example: basic
-          - os:
-              name: macos
-              runner: macos-latest
-            manager: pnpm
-            example: basic
-          - os:
-              name: ubuntu
-              runner: ubuntu-latest
-            manager: pnpm
-            example: kitchen-sink
-          - os:
-              name: macos
-              runner: macos-latest
-            manager: pnpm
-            example: kitchen-sink
-          - os:
-              name: ubuntu
-              runner: ubuntu-latest
-            manager: pnpm
-            example: with-svelte
-          - os:
-              name: macos
-              runner: macos-latest
-            manager: pnpm
-            example: with-svelte
-
     runs-on: ${{ matrix.os.runner }}
     steps:
       # Used by scripts/check-examples.sh
@@ -397,14 +363,14 @@ jobs:
           cache: ${{ matrix.manager }}
           cache-dependency-path: package.json
 
-      - name: Check \"${{ matrix.example }}\" example with \"${{ matrix.manager }}\"
+      - name: Test examples
         shell: bash
         env:
           FORCE_COLOR: true
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_REMOTE_ONLY: true
-        run: turbo run test --filter="turborepo-tests-examples" -- "${{ matrix.example }}" "${{ matrix.manager }}"
+        run: turbo run example-test --filter="@turborepo-examples-tests/*"
 
   rust_prepare:
     name: Check rust crates

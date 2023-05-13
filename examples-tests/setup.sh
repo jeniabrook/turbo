@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 exampleName=$1
 pkgManager=$2
 
 # Copy the example dir over to the test dir that prysk puts you in
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-MONOREPO_ROOT_DIR="$SCRIPT_DIR/../../.."
+MONOREPO_ROOT_DIR="$SCRIPT_DIR/.."
 EXAMPLE_DIR="$MONOREPO_ROOT_DIR/examples/$exampleName"
 
 TARGET_DIR="$(pwd)"
@@ -28,6 +28,7 @@ fi
 
 function set_package_manager() {
   cat package.json | jq ".packageManager=\"$1\"" | sponge package.json
+  corepack enable
 }
 
 # Set the packageManger version
@@ -36,16 +37,19 @@ PNPM_PACKAGE_MANAGER_VALUE="pnpm@6.26.1"
 YARN_PACKAGE_MANAGER_VALUE="yarn@1.22.17"
 if [ "$pkgManager" == "npm" ]; then
   set_package_manager "$NPM_PACKAGE_MANAGER_VALUE"
-  npm install > /dev/null
+  npm install > /dev/null 2>&1
 elif [ "$pkgManager" == "pnpm" ]; then
   set_package_manager "$PNPM_PACKAGE_MANAGER_VALUE"
-  pnpm install > /dev/null
+  pnpm install > /dev/null 2>&1
 elif [ "$pkgManager" == "yarn" ]; then
   set_package_manager "$YARN_PACKAGE_MANAGER_VALUE"
-  yarn install > /dev/null
+  # Pass a --cache-folder here because yarn seems to have trouble
+  # running multiple yarn installs at the same time and we are running
+  # examples tests in parallel. https://github.com/yarnpkg/yarn/issues/1275
+  yarn install --cache-folder="$PWD/.yarn-cache"
 fi
 
 # Delete .git directory if it's there, we'll set up a new git repo
 [ ! -d .git ] || rm -rf .git
 
-"$MONOREPO_ROOT_DIR/turborepo-tests/helpers/setup_git.sh" "${TARGET_DIR}"
+"$MONOREPO_ROOT_DIR/turborepo-tests/helpers/setup_git.sh" "${TARGET_DIR}" "false"
