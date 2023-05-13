@@ -13,7 +13,7 @@
       "inputs": [
         "**/*.go",
         "**/*_test.go",
-        "../crates/turborepo-*" // Rust crates
+        "../crates/turborepo-*/**" // Rust crates
       ]
     },
     "e2e": {
