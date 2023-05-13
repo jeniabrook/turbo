@@ -4,10 +4,10 @@
   "pipeline": {
     "build": {
       "outputs": [
-        // TODO: This is 7GB, do we want to ever even cache the debug build?
-        "../target/debug/**",
-        // TODO: Do we need the whole directory? go-turbo and turbo are ~45mb, the whole directory is 800mb
-        "../target/release/**"
+        "../target/debug/go-turbo",
+        "../target/debug/turbo",
+        "../target/release/go-turbo",
+        "../target/release/turbo"
       ],
 
       "inputs": [
