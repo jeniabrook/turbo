@@ -6662,6 +6662,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c604661086151ef0cfe2dff7740cd5fbdd06685d2eb03367024c3990d214b168"
 dependencies = [
  "binding_macros",
+ "once_cell",
  "swc",
  "swc_atoms",
  "swc_bundler",
@@ -6693,6 +6694,8 @@ dependencies = [
  "swc_ecma_visit",
  "swc_node_base",
  "swc_nodejs_common",
+ "swc_plugin",
+ "swc_plugin_macro",
  "swc_plugin_proxy",
  "swc_plugin_runner",
  "swc_trace_macro",
@@ -7458,6 +7461,26 @@ dependencies = [
  "serde_json",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "swc_plugin"
+version = "0.90.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca5df720531bfbd7ceb1139319c39c20c446abfb8f7e0eb47b104205a71152b4"
+dependencies = [
+ "once_cell",
+]
+
+[[package]]
+name = "swc_plugin_macro"
+version = "0.9.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae095f51123037ae9a8d29ef06b221a273fe11b489a3caa9eeba6a965a8b4cc1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
