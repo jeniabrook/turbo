@@ -12,7 +12,12 @@ bench = false
 [features]
 transform_emotion = []
 # [NOTE]: Be careful to explicitly enable this only for the supported platform / targets.
-swc_ecma_transform_plugin = ["swc_core/plugin_transform_host_native_memory_cache"]
+swc_ecma_transform_plugin = [
+  # "swc_core/plugin_transform_host_native_memory_cache",
+  # temp
+  "swc_core/__plugin_transform_host",
+  "swc_core/__plugin_transform_host_schema_v1",
+]
 
 [dependencies]
 anyhow = { workspace = true }
@@ -31,6 +36,13 @@ styled_jsx = { workspace = true }
 swc_core = { workspace = true, features = ["ecma_ast", "ecma_visit", "common"] }
 swc_emotion = { workspace = true }
 swc_relay = { workspace = true }
+#temp
+swc = { version = "*", features = ["plugin_transform_host_native"] }
+#temp
+swc_plugin_runner = { version = "*", features = [
+  "plugin_transform_host_native",
+  "memory_cache",
+], default-features = false }
 
 [build-dependencies]
 turbo-tasks-build = { workspace = true }
