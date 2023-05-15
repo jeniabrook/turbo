@@ -54,7 +54,7 @@ func (c *asyncCache) Fetch(anchor turbopath.AbsoluteSystemPath, key string, file
 	return c.realCache.Fetch(anchor, key, files)
 }
 
-func (c *asyncCache) Exists(key string) ItemStatus {
+func (c *asyncCache) Exists(key string) (ItemStatus, int) {
 	return c.realCache.Exists(key)
 }
 

@@ -156,6 +156,11 @@ func (tc *TaskCache) RestoreOutputs(ctx context.Context, prefixedUI *cli.Prefixe
 	} else {
 		// If outputs have not changed changed, that means we have a local cache hit.
 		cacheStatus.Local = true
+
+		// Check and assign timeSaved value.
+		_, saved := tc.rc.cache.Exists(tc.hash)
+		timeSaved = saved
+
 		prefixedUI.Warn(fmt.Sprintf("Configured outputs are already in place for %s, skipping cache check", tc.pt.TaskID))
 	}
 

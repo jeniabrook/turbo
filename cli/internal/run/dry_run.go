@@ -112,8 +112,8 @@ func populateCacheState(turboCache cache.Cache, taskSummaries []*runsummary.Task
 			defer wg.Done()
 			for index := range queue {
 				task := taskSummaries[index]
-				itemStatus := turboCache.Exists(task.Hash)
-				task.CacheSummary = runsummary.NewTaskCacheSummary(itemStatus, nil)
+				itemStatus, timeSaved := turboCache.Exists(task.Hash)
+				task.CacheSummary = runsummary.NewTaskCacheSummary(itemStatus, &timeSaved)
 			}
 		}()
 	}

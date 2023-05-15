@@ -21,7 +21,7 @@ type Cache interface {
 	// Fetch returns true if there is a cache it. It is expected to move files
 	// into their correct position as a side effect
 	Fetch(anchor turbopath.AbsoluteSystemPath, hash string, files []string) (ItemStatus, []turbopath.AnchoredSystemPath, int, error)
-	Exists(hash string) ItemStatus
+	Exists(hash string) (ItemStatus, int)
 	// Put caches files for a given hash
 	Put(anchor turbopath.AbsoluteSystemPath, hash string, duration int, files []turbopath.AnchoredSystemPath) error
 	Clean(anchor turbopath.AbsoluteSystemPath)
@@ -287,15 +287,26 @@ func (mplex *cacheMultiplexer) Fetch(anchor turbopath.AbsoluteSystemPath, key st
 	return ItemStatus{Local: false, Remote: false}, nil, 0, nil
 }
 
-func (mplex *cacheMultiplexer) Exists(target string) ItemStatus {
+func (mplex *cacheMultiplexer) Exists(target string) (ItemStatus, int) {
 	syncCacheState := ItemStatus{}
+	syncTimeSaved := 0
+
 	for _, cache := range mplex.caches {
-		itemStatus := cache.Exists(target)
+		itemStatus, timeSaved := cache.Exists(target)
+
 		syncCacheState.Local = syncCacheState.Local || itemStatus.Local
 		syncCacheState.Remote = syncCacheState.Remote || itemStatus.Remote
+
+		// If one of the caches saved more time, use that.
+		// TODO: it would make more sense to return the right value with the right cache,
+		// and then downstream pick the right cache to restore from, and then use _that_ timeSaved
+		// number, but that involves reworking the caching logic.
+		if timeSaved > syncTimeSaved {
+			syncTimeSaved = timeSaved
+		}
 	}
 
-	return syncCacheState
+	return syncCacheState, syncTimeSaved
 }
 
 func (mplex *cacheMultiplexer) Clean(anchor turbopath.AbsoluteSystemPath) {

@@ -74,15 +74,26 @@ func (f *fsCache) Fetch(anchor turbopath.AbsoluteSystemPath, hash string, _ []st
 	return ItemStatus{Local: true}, restoredFiles, meta.Duration, nil
 }
 
-func (f *fsCache) Exists(hash string) ItemStatus {
+// Exists returns the ItemStatus and the timeSaved
+func (f *fsCache) Exists(hash string) (ItemStatus, int) {
 	uncompressedCachePath := f.cacheDirectory.UntypedJoin(hash + ".tar")
 	compressedCachePath := f.cacheDirectory.UntypedJoin(hash + ".tar.zst")
 
+	status := ItemStatus{Local: false}
 	if compressedCachePath.FileExists() || uncompressedCachePath.FileExists() {
-		return ItemStatus{Local: true}
+		status.Local = true
 	}
 
-	return ItemStatus{Local: false}
+	// Swallow the error
+	var duration int
+	if meta, err := ReadCacheMetaFile(f.cacheDirectory.UntypedJoin(hash + "-meta.json")); err != nil {
+		return status, 0
+	} else {
+		duration = meta.Duration
+	}
+
+	return status, duration
+
 }
 
 func (f *fsCache) logFetch(hit bool, hash string, duration int) {

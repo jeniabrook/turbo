@@ -14,8 +14,8 @@ func (c *noopCache) Put(_ turbopath.AbsoluteSystemPath, _ string, _ int, _ []tur
 func (c *noopCache) Fetch(_ turbopath.AbsoluteSystemPath, _ string, _ []string) (ItemStatus, []turbopath.AnchoredSystemPath, int, error) {
 	return ItemStatus{Local: false, Remote: false}, nil, 0, nil
 }
-func (c *noopCache) Exists(_ string) ItemStatus {
-	return ItemStatus{}
+func (c *noopCache) Exists(_ string) (ItemStatus, int) {
+	return ItemStatus{}, 0
 }
 
 func (c *noopCache) Clean(_ turbopath.AbsoluteSystemPath) {}
