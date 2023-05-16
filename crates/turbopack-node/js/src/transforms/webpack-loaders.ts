@@ -68,6 +68,7 @@ const transform = (
           },
           emitWarning: makeErrorEmitter("warning", ipc),
           emitError: makeErrorEmitter("error", ipc),
+          getLogger: (boo: any) => console.log(boo),
         },
         loaders: loadersWithOptions.map((loader) => ({
           loader: __turbopack_external_require__.resolve(loader.loader, {
