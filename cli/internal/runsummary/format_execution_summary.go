@@ -2,6 +2,7 @@ package runsummary
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -19,6 +20,11 @@ func (rsm *Meta) printExecutionSummary() {
 	cached := summary.ExecutionSummary.cached
 	// TODO: can we use a method on ExecutionSummary here?
 	duration := time.Since(summary.ExecutionSummary.startedAt).Truncate(time.Millisecond)
+
+	failedTaskNames := []string{}
+	for _, t := range rsm.RunSummary.getFailedTasks() {
+		failedTaskNames = append(failedTaskNames, t.TaskID)
+	}
 
 	if cached == attempted && attempted > 0 {
 		terminalProgram := os.Getenv("TERM_PROGRAM")
@@ -48,16 +54,22 @@ func (rsm *Meta) printExecutionSummary() {
 	// bunch of test output assertions to change.
 	if rsm.getPath().FileExists() {
 		lines = []string{
-			util.Sprintf("${BOLD}  Tasks:${BOLD_GREEN}%s%v successful${RESET}${GRAY}, %v total${RESET}", spacer, successful, attempted),
-			util.Sprintf("${BOLD} Cached:%s%v cached${RESET}${GRAY}, %v total${RESET}", spacer, cached, attempted),
-			util.Sprintf("${BOLD}   Time:%s%v${RESET} %v${RESET}", spacer, duration, maybeFullTurbo),
-			util.Sprintf("${BOLD}Summary:%s%s${RESET}", spacer, rsm.getPath()),
+			util.Sprintf("${BOLD}   Tasks:${BOLD_GREEN}%s%v successful${RESET}${GRAY}, %v total${RESET}", spacer, successful, attempted),
+			util.Sprintf("${BOLD}  Cached:%s%v cached${RESET}${GRAY}, %v total${RESET}", spacer, cached, attempted),
+			util.Sprintf("${BOLD}    Time:%s%v${RESET} %v${RESET}", spacer, duration, maybeFullTurbo),
+			util.Sprintf("${BOLD} Summary:%s%s${RESET}", spacer, rsm.getPath()),
+		}
+		if len(failedTaskNames) > 0 {
+			lines = append(lines, util.Sprintf("${BOLD_RED}  Failed:%s%s${RESET}", spacer, strings.Join(failedTaskNames, ", ")))
 		}
 	} else {
 		lines = []string{
-			util.Sprintf("${BOLD} Tasks:${BOLD_GREEN}%s%v successful${RESET}${GRAY}, %v total${RESET}", spacer, successful, attempted),
-			util.Sprintf("${BOLD}Cached:%s%v cached${RESET}${GRAY}, %v total${RESET}", spacer, cached, attempted),
-			util.Sprintf("${BOLD}  Time:%s%v${RESET} %v${RESET}", spacer, duration, maybeFullTurbo),
+			util.Sprintf("${BOLD}  Tasks:${BOLD_GREEN}%s%v successful${RESET}${GRAY}, %v total${RESET}", spacer, successful, attempted),
+			util.Sprintf("${BOLD} Cached:%s%v cached${RESET}${GRAY}, %v total${RESET}", spacer, cached, attempted),
+			util.Sprintf("${BOLD}   Time:%s%v${RESET} %v${RESET}", spacer, duration, maybeFullTurbo),
+		}
+		if len(failedTaskNames) > 0 {
+			lines = append(lines, util.Sprintf("${BOLD_RED} Failed:${RESET}%s%s${RESET}", spacer, strings.Join(failedTaskNames, ", ")))
 		}
 	}
 
