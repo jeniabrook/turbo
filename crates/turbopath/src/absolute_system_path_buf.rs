@@ -6,6 +6,7 @@ use std::{
     path::{Components, Path, PathBuf},
 };
 
+use path_clean::PathClean;
 use serde::Serialize;
 
 use crate::{
@@ -237,8 +238,12 @@ impl AbsoluteSystemPathBuf {
     }
 
     pub fn to_realpath(&self) -> Result<Self, PathError> {
-        let realpath = fs::canonicalize(&self.0)?;
+        let realpath = dunce::canonicalize(&self.0)?;
         Ok(Self(realpath))
+    }
+
+    pub fn clean(&self) -> Self {
+        Self(self.0.clean())
     }
 
     pub fn symlink_to_file(&self, target: impl AsRef<Path>) -> Result<(), PathError> {
@@ -291,6 +296,13 @@ mod tests {
                 PathValidationError::NotAbsolute(_)
             ))
         );
+
+        assert_eq!(
+            AbsoluteSystemPathBuf::new("/some/dir/../other")
+                .unwrap()
+                .clean(),
+            AbsoluteSystemPathBuf::new("/some/other").unwrap(),
+        );
     }
 
     #[cfg(windows)]
@@ -314,6 +326,13 @@ mod tests {
             Err(PathError::PathValidationError(
                 PathValidationError::NotAbsolute(_)
             ))
-        )
+        );
+
+        assert_eq!(
+            AbsoluteSystemPathBuf::new("C:\\some\\dir\\..\\other")
+                .unwrap()
+                .clean(),
+            AbsoluteSystemPathBuf::new("C:\\some\\other").unwrap(),
+        );
     }
 }

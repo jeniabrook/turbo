@@ -4571,6 +4571,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ecba01bf2678719532c5e3059e0b5f0811273d94b397088b82e3bd0a78c78fdd"
 
 [[package]]
+name = "path-clean"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "17359afc20d7ab31fdb42bb844c8b3bb1dabd7dcf7e68428492da7f16966fcef"
+
+[[package]]
 name = "path-slash"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6933,7 +6939,7 @@ dependencies = [
  "normpath",
  "once_cell",
  "parking_lot",
- "path-clean",
+ "path-clean 0.1.0",
  "pathdiff",
  "serde",
  "serde_json",
@@ -7163,7 +7169,7 @@ dependencies = [
  "bitflags 2.2.1",
  "indexmap",
  "is-macro",
- "path-clean",
+ "path-clean 0.1.0",
  "pathdiff",
  "regex",
  "serde",
@@ -9151,6 +9157,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bstr",
+ "dunce",
+ "path-clean 1.0.1",
  "path-slash",
  "serde",
  "thiserror",
@@ -10177,7 +10185,7 @@ dependencies = [
  "lexical-sort",
  "memmap2",
  "once_cell",
- "path-clean",
+ "path-clean 0.1.0",
  "rand 0.8.5",
  "serde",
  "serde_cbor",
